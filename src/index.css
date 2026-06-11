@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #FBFBFF;
+  --color-brand-100: #F3F0FF;
+  --color-brand-200: #E9E5FF;
+  --color-brand-300: #D0C6FF;
+  --color-brand-400: #9D7BEA;
+  --color-brand-500: #6B4DAB;
+  --color-brand-600: #4B2C82;
+  --color-brand-700: #372061;
+  --color-brand-800: #261642;
+  --color-brand-900: #1A0B2E;
+  --color-brand-950: #10061d;
+  --color-background-offwhite: #FBFBFF;
+}
+
+body {
+  background-color: var(--color-background-offwhite);
+  color: var(--color-brand-900);
+  font-family: var(--font-sans);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite linear;
+  background: linear-gradient(90deg, var(--color-brand-50) 8%, var(--color-brand-100) 18%, var(--color-brand-50) 33%);
+  background-size: 200% 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}

@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "Home": "Home",
+    "About": "About",
+    "Services": "Services",
+    "Portfolio": "Portfolio",
+    "Blog": "Blog",
+    "Careers": "Careers",
+    "GetTouch": "Get in touch"
+  }
+}
