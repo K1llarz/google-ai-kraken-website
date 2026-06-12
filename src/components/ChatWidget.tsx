@@ -67,7 +67,7 @@ export function ChatWidget() {
       </AnimatePresence>
 
       <div className="relative group float-right mt-4">
-        <div className="absolute -inset-1 bg-gradient-to-r from-brand-600 to-indigo-600 rounded-full blur opacity-40 group-hover:opacity-70 transition duration-1000 group-hover:duration-200" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-brand-600 to-brand-700 rounded-full blur opacity-40 group-hover:opacity-70 transition duration-1000 group-hover:duration-200" />
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="relative w-16 h-16 bg-brand-600 rounded-full flex items-center justify-center shadow-2xl text-white transform hover:scale-105 active:scale-95 transition-transform"
