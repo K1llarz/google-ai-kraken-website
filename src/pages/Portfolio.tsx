@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 import { AnimatedSection } from '../components/AnimatedSection';
 import { Skeleton } from '../components/Skeleton';
 import { portfolioItems } from '../data';
+import { usePageContent } from '../lib/content';
 
 const categories = ['All', 'Performance Marketing', 'Design', 'AI/Tech'];
 
 export function Portfolio() {
+  const { content } = usePageContent('portfolio');
   const [activeCategory, setActiveCategory] = useState('All');
   const [loading, setLoading] = useState(true);
 
@@ -28,10 +30,10 @@ export function Portfolio() {
       <section className="pt-32 pb-16 px-6 max-w-7xl mx-auto">
         <AnimatedSection className="text-center mb-16">
           <h1 className="text-5xl md:text-7xl font-display font-bold text-brand-900 mb-6 tracking-tight">
-            Selected Work
+            {content.heroTitle}
           </h1>
           <p className="text-xl font-medium text-gray-500 max-w-2xl mx-auto">
-            A showcase of our proudest digital transformations and growth accelerations.
+            {content.heroSubtitle}
           </p>
         </AnimatedSection>
 

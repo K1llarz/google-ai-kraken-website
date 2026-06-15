@@ -4,8 +4,10 @@ import { X } from 'lucide-react';
 import { AnimatedSection } from '../components/AnimatedSection';
 import { Skeleton } from '../components/Skeleton';
 import { jobOpenings } from '../data';
+import { usePageContent } from '../lib/content';
 
 export function Careers() {
+  const { content } = usePageContent('careers');
   const [selectedJob, setSelectedJob] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -22,10 +24,10 @@ export function Careers() {
       <section className="pt-32 pb-20 px-6 max-w-7xl mx-auto text-center">
         <AnimatedSection>
           <h1 className="text-5xl md:text-7xl font-display font-bold text-brand-900 mb-6 tracking-tight">
-            Build the future <span className="italic font-light">with us</span>.
+            {content.heroTitle}
           </h1>
           <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto leading-relaxed">
-            We are a collective of creators, engineers, and strategists. Join a culture that champions bold ideas and ruthless execution.
+            {content.heroSubtitle}
           </p>
         </AnimatedSection>
       </section>

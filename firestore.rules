@@ -13,6 +13,45 @@ service cloud.firestore {
       return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
+    // Admin allow-list. An entry's presence grants admin access.
+    // Managed manually (Firebase console) — never writable from the client.
+    match /admins/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow list, write: if false;
+    }
+
+    // Blog posts. Public can read published posts; admins manage everything.
+    function validPost() {
+      let d = incoming();
+      return d.title is string && d.title.size() > 0 && d.title.size() <= 200
+        && d.slug is string && d.slug.matches('^[a-z0-9-]+$') && d.slug.size() <= 80
+        && d.content is string && d.content.size() <= 100000
+        && d.excerpt is string && d.excerpt.size() <= 2000
+        && d.coverImage is string && d.coverImage.size() <= 2000
+        && d.category is string && d.category.size() <= 100
+        && d.tags is list && d.tags.size() <= 30
+        && d.status in ['draft', 'published']
+        && d.seoTitle is string && d.seoTitle.size() <= 200
+        && d.seoDescription is string && d.seoDescription.size() <= 320;
+    }
+    match /posts/{postId} {
+      allow get, list: if (resource.data.status == 'published') || isAdmin();
+      allow create, update: if isAdmin() && validPost();
+      allow delete: if isAdmin();
+    }
+
+    // Editable page content. Public reads; admins write.
+    function validPage() {
+      let d = incoming();
+      return d.fields is map
+        && d.seoTitle is string && d.seoTitle.size() <= 200
+        && d.seoDescription is string && d.seoDescription.size() <= 320;
+    }
+    match /pages/{pageId} {
+      allow read: if true;
+      allow write: if isAdmin() && validPage();
+    }
+
     match /contacts/{contactId} {
       allow read, delete: if isAdmin();
       allow update: if false; // Contacts shouldn't be updated once submitted

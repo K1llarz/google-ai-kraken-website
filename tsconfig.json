@@ -23,5 +23,7 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "include": ["src", "*.ts", "*.tsx"],
+  "exclude": ["node_modules", "dist", "google-ai-kraken-website"]
 }

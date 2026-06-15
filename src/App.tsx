@@ -15,24 +15,47 @@ import { Blog } from './pages/Blog';
 import { BlogDetail } from './pages/BlogDetail';
 import { Careers } from './pages/Careers';
 import { Contact } from './pages/Contact';
+import { AuthProvider } from './admin/AuthContext';
+import { ProtectedRoute } from './admin/ProtectedRoute';
+import { AdminLayout } from './admin/AdminLayout';
+import { Login } from './admin/pages/Login';
+import { Dashboard } from './admin/pages/Dashboard';
+import { PostsList } from './admin/pages/PostsList';
+import { PostEditor } from './admin/pages/PostEditor';
+import { PagesList } from './admin/pages/PagesList';
+import { PageEditor } from './admin/pages/PageEditor';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="services" element={<Services />} />
-          <Route path="portfolio" element={<Portfolio />} />
-          <Route path="portfolio/:id" element={<PortfolioDetail />} />
-          <Route path="blog" element={<Blog />} />
-          <Route path="blog/:id" element={<BlogDetail />} />
-          <Route path="careers" element={<Careers />} />
-          <Route path="contact" element={<Contact />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          {/* Public site */}
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route path="services" element={<Services />} />
+            <Route path="portfolio" element={<Portfolio />} />
+            <Route path="portfolio/:id" element={<PortfolioDetail />} />
+            <Route path="blog" element={<Blog />} />
+            <Route path="blog/:slug" element={<BlogDetail />} />
+            <Route path="careers" element={<Careers />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
+
+          {/* Admin */}
+          <Route path="/admin/login" element={<Login />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="posts" element={<PostsList />} />
+              <Route path="posts/:id" element={<PostEditor />} />
+              <Route path="pages" element={<PagesList />} />
+              <Route path="pages/:pageId" element={<PageEditor />} />
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
-

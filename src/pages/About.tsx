@@ -1,8 +1,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { AnimatedSection } from '../components/AnimatedSection';
+import { usePageContent } from '../lib/content';
 
 export function About() {
+  const { content } = usePageContent('about');
   return (
     <div className="bg-white min-h-screen">
       {/* Header */}
@@ -13,10 +15,10 @@ export function About() {
            transition={{ duration: 0.6 }}
         >
           <h1 className="text-5xl md:text-7xl font-display font-bold text-brand-900 mb-8 tracking-tight">
-            We are the <span className="italic font-light">anti-agency</span>.
+            {content.heroTitle}
           </h1>
           <p className="text-xl text-gray-600 font-medium max-w-3xl mx-auto leading-relaxed">
-            Born out of frustration with slow, outdated marketing practices. We move fast, think deeply, and craft experiences that actually convert.
+            {content.heroSubtitle}
           </p>
         </motion.div>
       </section>
@@ -26,8 +28,8 @@ export function About() {
           <AnimatedSection>
             <div className="aspect-[21/9] rounded-[2.5rem] overflow-hidden border border-brand-100 shadow-sm relative group">
               <div className="absolute inset-0 bg-brand-600/10 z-10" />
-              <img 
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=2000" 
+              <img
+                src={content.heroImage}
                 alt="Our Team"
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
@@ -41,7 +43,7 @@ export function About() {
         <div className="max-w-4xl mx-auto px-6 text-center">
           <AnimatedSection>
             <h2 className="text-3xl md:text-5xl font-display font-bold text-brand-900 mb-8 leading-tight">
-              Our mission is to help exceptional brands become undeniable.
+              {content.missionHeading}
             </h2>
             <div className="h-1 w-20 bg-brand-400 mx-auto rounded-full" />
           </AnimatedSection>
@@ -53,7 +55,7 @@ export function About() {
         <div className="max-w-7xl mx-auto px-6">
           <AnimatedSection className="mb-16 text-center">
             <h2 className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-400 mb-3">Meet the Leadership</h2>
-            <p className="text-4xl font-display font-bold text-brand-900 mb-4 tracking-tight">The minds behind the magic.</p>
+            <p className="text-4xl font-display font-bold text-brand-900 mb-4 tracking-tight">{content.teamHeading}</p>
           </AnimatedSection>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

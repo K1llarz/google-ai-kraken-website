@@ -1,20 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { AnimatedSection } from '../components/AnimatedSection';
 import { Skeleton } from '../components/Skeleton';
-import { blogPosts } from '../data';
+import { listPublishedPosts } from '../lib/posts';
+import type { Post } from '../types';
+
+function postDate(post: Post): string {
+  return post.publishedAt
+    ? post.publishedAt.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
+}
 
 export function Blog() {
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
+    (async () => {
+      try {
+        setPosts(await listPublishedPosts());
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
+
+  const filtered = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return posts;
+    return posts.filter(
+      (p) =>
+        p.title.toLowerCase().includes(term) ||
+        p.category.toLowerCase().includes(term) ||
+        p.tags.some((t) => t.toLowerCase().includes(term)),
+    );
+  }, [posts, search]);
 
   return (
     <div className="bg-white min-h-screen">
@@ -28,10 +53,12 @@ export function Blog() {
               Thoughts on technology, design, and performance marketing.
             </p>
           </AnimatedSection>
-          
+
           <AnimatedSection delay={0.2} className="w-full md:max-w-sm relative">
-            <input 
-              type="text" 
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search articles..."
               className="w-full pl-12 pr-4 py-4 rounded-full border border-brand-100 bg-brand-50 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all shadow-sm text-sm font-medium"
             />
@@ -39,9 +66,13 @@ export function Blog() {
           </AnimatedSection>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {loading ? (
-            Array.from({ length: 3 }).map((_, index) => (
+        {error ? (
+          <div className="text-center py-20 text-gray-400 font-medium">
+            We couldn't load articles right now. Please try again later.
+          </div>
+        ) : loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-brand-100 flex flex-col h-[420px]">
                 <Skeleton className="w-full aspect-video rounded-none" />
                 <div className="p-8 flex flex-col flex-1">
@@ -53,24 +84,34 @@ export function Blog() {
                   </div>
                 </div>
               </div>
-            ))
-          ) : (
-            blogPosts.map((post, index) => (
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 text-gray-400 font-medium">
+            {posts.length === 0 ? 'No articles published yet. Check back soon.' : 'No articles match your search.'}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filtered.map((post, index) => (
               <AnimatedSection key={post.id} delay={index * 0.1}>
-                <Link to={`/blog/${post.id}`} className="bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-brand-100 flex flex-col h-full group block">
+                <Link to={`/blog/${post.slug}`} className="bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-brand-100 flex flex-col h-full group block">
                   <div className="aspect-video relative overflow-hidden bg-gray-100">
-                    <img 
-                      src={post.image} 
-                      alt={post.title}
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                    />
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-[10px] uppercase tracking-widest font-black text-brand-900 shadow-sm">
-                      {post.category}
-                    </div>
+                    {post.coverImage && (
+                      <img
+                        src={post.coverImage}
+                        alt={post.title}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                      />
+                    )}
+                    {post.category && (
+                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-[10px] uppercase tracking-widest font-black text-brand-900 shadow-sm">
+                        {post.category}
+                      </div>
+                    )}
                   </div>
                   <div className="p-8 flex flex-col flex-1">
                     <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-brand-400 mb-4">
-                      <span>{post.date}</span>
+                      <span>{postDate(post)}</span>
                       <span>{post.readTime}</span>
                     </div>
                     <h3 className="text-2xl font-bold font-display text-brand-900 mb-4 group-hover:text-brand-600 transition-colors leading-snug">
@@ -84,9 +125,9 @@ export function Blog() {
                   </div>
                 </Link>
               </AnimatedSection>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

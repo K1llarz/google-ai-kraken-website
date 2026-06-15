@@ -6,8 +6,10 @@ import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { handleFirestoreError, OperationType } from '../lib/firebaseUtils';
 import { services } from '../data';
+import { usePageContent } from '../lib/content';
 
 export function Contact() {
+  const { content } = usePageContent('contact');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -38,7 +40,7 @@ export function Contact() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -48,10 +50,10 @@ export function Contact() {
       <section className="pt-32 pb-24 px-6 max-w-7xl mx-auto">
         <AnimatedSection className="text-center mb-16">
           <h1 className="text-5xl md:text-7xl font-display font-bold text-brand-900 mb-6 tracking-tight">
-            Let's build together.
+            {content.heroTitle}
           </h1>
           <p className="text-xl font-medium text-gray-600 max-w-2xl mx-auto">
-            Ready to dramatically scale your brand? Drop us a line and let's get to work.
+            {content.heroSubtitle}
           </p>
         </AnimatedSection>
 
@@ -167,7 +169,7 @@ export function Contact() {
                     </div>
                     <div className="mt-1">
                       <p className="text-[10px] uppercase tracking-widest font-black text-brand-400 mb-1">Email Us</p>
-                      <p className="text-brand-900 font-bold">hello@kroma.agency</p>
+                      <p className="text-brand-900 font-bold">{content.email}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -176,7 +178,7 @@ export function Contact() {
                     </div>
                     <div className="mt-1">
                       <p className="text-[10px] uppercase tracking-widest font-black text-brand-400 mb-1">Call Us</p>
-                      <p className="text-brand-900 font-bold">+1 (555) 000-0000</p>
+                      <p className="text-brand-900 font-bold">{content.phone}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -185,7 +187,7 @@ export function Contact() {
                     </div>
                     <div className="mt-1">
                       <p className="text-[10px] uppercase tracking-widest font-black text-brand-400 mb-1">Visit Us</p>
-                      <p className="text-brand-900 font-bold">123 Marketing Ave, Suite 400<br/>New York, NY 10001</p>
+                      <p className="text-brand-900 font-bold whitespace-pre-line">{content.address}</p>
                     </div>
                   </div>
                 </div>

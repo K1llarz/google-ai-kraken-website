@@ -3,8 +3,10 @@ import { motion } from 'motion/react';
 import { AnimatedSection } from '../components/AnimatedSection';
 import { Skeleton } from '../components/Skeleton';
 import { services } from '../data';
+import { usePageContent } from '../lib/content';
 
 export function Services() {
+  const { content } = usePageContent('services');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,10 +27,10 @@ export function Services() {
              transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 tracking-tight">
-              Our Core Services
+              {content.heroTitle}
             </h1>
             <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto leading-relaxed">
-              We don't do everything. We do what we're exceptionally good at. Here is how we scale brands to the moon.
+              {content.heroSubtitle}
             </p>
           </motion.div>
         </div>

@@ -3,9 +3,11 @@ import { motion } from 'motion/react';
 import { ArrowRight, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AnimatedSection } from '../components/AnimatedSection';
-import { services, portfolioItems, blogPosts } from '../data';
+import { services, portfolioItems } from '../data';
+import { usePageContent } from '../lib/content';
 
 export function Home() {
+  const { content } = usePageContent('home');
   return (
     <div className="bg-white">
       {/* Hero Section */}
@@ -20,13 +22,13 @@ export function Home() {
             className="max-w-4xl text-center flex flex-col items-center gap-10"
           >
             <h1 className="text-6xl md:text-8xl lg:text-9xl font-display leading-[0.9] text-white drop-shadow-2xl font-bold tracking-tight">
-              Let's Build <br/>Something <span className="italic font-light">Unforgettable.</span>
+              {content.heroTitle}
             </h1>
             <p className="text-lg md:text-xl text-brand-50 leading-relaxed max-w-2xl font-medium mx-auto">
-              Partner with Kroma to turn your vision into a bold digital presence — captivating audiences and driving measurable growth.
+              {content.heroSubtitle}
             </p>
             <Link to="/contact" className="bg-white text-brand-600 px-14 py-6 rounded-full text-base font-bold uppercase tracking-widest hover:bg-brand-50 transition-colors shadow-xl">
-              Contact Us
+              {content.heroCtaLabel}
             </Link>
           </motion.div>
         </div>
@@ -60,9 +62,9 @@ export function Home() {
 
             <AnimatedSection delay={0.2}>
               <div>
-                <h2 className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-400 mb-3">About Kroma</h2>
+                <h2 className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-400 mb-3">{content.aboutLabel}</h2>
                 <h3 className="text-4xl md:text-5xl font-display font-bold text-brand-900 mb-6 leading-tight">
-                  We don't just build brands. We build movements.
+                  {content.aboutHeading}
                 </h3>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed font-medium">
                   Founded on the belief that traditional marketing is dead, Kroma merges behavioral psychology, stunning aesthetics, and deep technical expertise. We partner with founders who are ready to dominate their space.
@@ -91,7 +93,7 @@ export function Home() {
           <AnimatedSection className="text-center mb-16 max-w-3xl mx-auto">
              <h2 className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-400 mb-3 text-center">Core Capabilities</h2>
              <h3 className="text-4xl md:text-5xl font-display font-bold text-brand-900 mb-6 leading-tight">
-               Everything you need to scale, under one roof.
+               {content.servicesHeading}
              </h3>
           </AnimatedSection>
 
@@ -132,7 +134,7 @@ export function Home() {
             <div className="max-w-2xl">
               <h2 className="text-[10px] uppercase tracking-[0.2em] font-black text-brand-400 mb-3">Our Work</h2>
               <h3 className="text-4xl md:text-5xl font-display font-bold text-brand-900 leading-tight">
-                Selected projects.
+                {content.portfolioHeading}
               </h3>
             </div>
             <Link to="/portfolio" className="inline-flex items-center gap-2 text-brand-900 font-bold text-xs uppercase tracking-widest hover:text-brand-600 transition-colors group pb-2 border-b-2 border-brand-900 hover:border-brand-600">
@@ -171,10 +173,10 @@ export function Home() {
         <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
           <AnimatedSection>
             <h2 className="text-5xl md:text-6xl font-display font-bold text-white mb-6">
-              Do the best work of your life.
+              {content.careersHeading}
             </h2>
             <p className="text-xl text-brand-200 mb-10 max-w-2xl mx-auto font-medium">
-              We're always looking for brilliant misfits, visionary creatives, and ruthless optimizers to join the team.
+              {content.careersBody}
             </p>
             <Link to="/careers" className="inline-block bg-white text-brand-900 px-8 py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-brand-50 transition-colors shadow-xl">
               View open positions
