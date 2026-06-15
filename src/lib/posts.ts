@@ -1,25 +1,17 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-  orderBy,
-  limit as fbLimit,
-  serverTimestamp,
-  type DocumentData,
-  type QueryDocumentSnapshot,
-} from 'firebase/firestore';
-import { db } from '../firebase';
-import { handleFirestoreError, OperationType } from './firebaseUtils';
+/**
+ * Posts data layer — LOCAL (localStorage) implementation.
+ * Mirrors the Firebase version's API so callers are unchanged.
+ */
 import type { Post, PostInput } from '../types';
+import { KEYS, readJSON, writeJSON, hasKey, nowISO, newId, toTimestamp } from './localStore';
+import { blogPosts as samplePosts } from '../data';
 
-const COLLECTION = 'posts';
-const postsRef = collection(db, COLLECTION);
+/** Stored record: like Post but with ISO date strings instead of timestamps. */
+interface StoredPost extends Omit<Post, 'createdAt' | 'updatedAt' | 'publishedAt'> {
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string | null;
+}
 
 /** Convert a title into a URL-safe slug. */
 export function slugify(input: string): string {
@@ -32,124 +24,106 @@ export function slugify(input: string): string {
     .slice(0, 80);
 }
 
-function toPost(snap: QueryDocumentSnapshot<DocumentData> | DocumentData, id?: string): Post {
-  const data = ('data' in snap ? snap.data() : snap) as DocumentData;
-  const docId = id ?? ('id' in snap ? (snap as QueryDocumentSnapshot).id : '');
+function toPost(record: StoredPost): Post {
   return {
-    id: docId,
-    title: data.title ?? '',
-    slug: data.slug ?? '',
-    content: data.content ?? '',
-    excerpt: data.excerpt ?? '',
-    coverImage: data.coverImage ?? '',
-    category: data.category ?? '',
-    tags: Array.isArray(data.tags) ? data.tags : [],
-    author: data.author ?? '',
-    authorRole: data.authorRole ?? '',
-    readTime: data.readTime ?? '',
-    status: data.status === 'published' ? 'published' : 'draft',
-    seoTitle: data.seoTitle ?? '',
-    seoDescription: data.seoDescription ?? '',
-    createdAt: data.createdAt ?? null,
-    updatedAt: data.updatedAt ?? null,
-    publishedAt: data.publishedAt ?? null,
+    ...record,
+    createdAt: toTimestamp(record.createdAt),
+    updatedAt: toTimestamp(record.updatedAt),
+    publishedAt: toTimestamp(record.publishedAt),
   };
 }
 
-/** All posts, newest first — admin only (rules require admin to read drafts). */
+/** Seed the store with the sample posts from data.ts the first time it's used. */
+function seedIfEmpty(): void {
+  if (hasKey(KEYS.posts)) return;
+  const seeded: StoredPost[] = samplePosts.map((p) => {
+    const iso = new Date(p.date).toISOString();
+    return {
+      id: newId(),
+      title: p.title,
+      slug: slugify(p.id),
+      content: p.content,
+      excerpt: p.content.split('\n\n')[0].slice(0, 160),
+      coverImage: p.image,
+      category: p.category,
+      tags: [],
+      author: p.author,
+      authorRole: p.authorRole,
+      readTime: p.readTime,
+      status: 'published',
+      seoTitle: p.title,
+      seoDescription: '',
+      createdAt: iso,
+      updatedAt: iso,
+      publishedAt: iso,
+    };
+  });
+  writeJSON(KEYS.posts, seeded);
+}
+
+function readPosts(): StoredPost[] {
+  seedIfEmpty();
+  return readJSON<StoredPost[]>(KEYS.posts, []);
+}
+
+function byNewest(a: string | null, b: string | null): number {
+  return new Date(b ?? 0).getTime() - new Date(a ?? 0).getTime();
+}
+
+/** All posts, newest first — admin. */
 export async function listPosts(): Promise<Post[]> {
-  try {
-    const q = query(postsRef, orderBy('createdAt', 'desc'));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => toPost(d));
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, COLLECTION);
-    return [];
-  }
+  return readPosts()
+    .sort((a, b) => byNewest(a.createdAt, b.createdAt))
+    .map(toPost);
 }
 
 /** Published posts only, newest first — public site. */
 export async function listPublishedPosts(): Promise<Post[]> {
-  try {
-    const q = query(
-      postsRef,
-      where('status', '==', 'published'),
-      orderBy('publishedAt', 'desc'),
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => toPost(d));
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, COLLECTION);
-    return [];
-  }
+  return readPosts()
+    .filter((p) => p.status === 'published')
+    .sort((a, b) => byNewest(a.publishedAt, b.publishedAt))
+    .map(toPost);
 }
 
 export async function getPost(id: string): Promise<Post | null> {
-  try {
-    const snap = await getDoc(doc(db, COLLECTION, id));
-    return snap.exists() ? toPost(snap.data(), snap.id) : null;
-  } catch (error) {
-    handleFirestoreError(error, OperationType.GET, `${COLLECTION}/${id}`);
-    return null;
-  }
+  const found = readPosts().find((p) => p.id === id);
+  return found ? toPost(found) : null;
 }
 
 /** Public lookup by slug. Returns the first published match. */
 export async function getPublishedPostBySlug(slug: string): Promise<Post | null> {
-  try {
-    const q = query(
-      postsRef,
-      where('slug', '==', slug),
-      where('status', '==', 'published'),
-      fbLimit(1),
-    );
-    const snap = await getDocs(q);
-    return snap.empty ? null : toPost(snap.docs[0]);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, COLLECTION);
-    return null;
-  }
+  const found = readPosts().find((p) => p.slug === slug && p.status === 'published');
+  return found ? toPost(found) : null;
 }
 
 export async function createPost(input: PostInput): Promise<string> {
-  try {
-    const now = serverTimestamp();
-    const ref = await addDoc(postsRef, {
-      ...input,
-      createdAt: now,
-      updatedAt: now,
-      publishedAt: input.status === 'published' ? now : null,
-    });
-    return ref.id;
-  } catch (error) {
-    handleFirestoreError(error, OperationType.CREATE, COLLECTION);
-    throw error;
-  }
+  const posts = readPosts();
+  const iso = nowISO();
+  const id = newId();
+  posts.push({
+    ...input,
+    id,
+    createdAt: iso,
+    updatedAt: iso,
+    publishedAt: input.status === 'published' ? iso : null,
+  });
+  writeJSON(KEYS.posts, posts);
+  return id;
 }
 
-export async function updatePost(
-  id: string,
-  input: PostInput,
-  wasPublished: boolean,
-): Promise<void> {
-  try {
-    const patch: Record<string, unknown> = { ...input, updatedAt: serverTimestamp() };
-    // Set publishedAt the first time a post transitions to published.
-    if (input.status === 'published' && !wasPublished) {
-      patch.publishedAt = serverTimestamp();
-    }
-    await updateDoc(doc(db, COLLECTION, id), patch);
-  } catch (error) {
-    handleFirestoreError(error, OperationType.UPDATE, `${COLLECTION}/${id}`);
-    throw error;
-  }
+export async function updatePost(id: string, input: PostInput, wasPublished: boolean): Promise<void> {
+  const posts = readPosts();
+  const idx = posts.findIndex((p) => p.id === id);
+  if (idx === -1) throw new Error('Post not found.');
+  const existing = posts[idx];
+  // Stamp publishedAt the first time a post transitions to published.
+  const publishedAt =
+    input.status === 'published' && !wasPublished ? nowISO() : existing.publishedAt;
+  posts[idx] = { ...existing, ...input, updatedAt: nowISO(), publishedAt };
+  writeJSON(KEYS.posts, posts);
 }
 
 export async function deletePost(id: string): Promise<void> {
-  try {
-    await deleteDoc(doc(db, COLLECTION, id));
-  } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, `${COLLECTION}/${id}`);
-    throw error;
-  }
+  const posts = readPosts().filter((p) => p.id !== id);
+  writeJSON(KEYS.posts, posts);
 }

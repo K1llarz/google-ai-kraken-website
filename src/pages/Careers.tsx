@@ -3,20 +3,27 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { AnimatedSection } from '../components/AnimatedSection';
 import { Skeleton } from '../components/Skeleton';
-import { jobOpenings } from '../data';
+import { listPublishedJobs } from '../lib/jobs';
+import type { JobOpening } from '../types';
 import { usePageContent } from '../lib/content';
 
 export function Careers() {
   const { content } = usePageContent('careers');
+  const [jobs, setJobs] = useState<JobOpening[]>([]);
   const [selectedJob, setSelectedJob] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
+    (async () => {
+      try {
+        setJobs(await listPublishedJobs());
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
+
+  const activeJob = jobs.find((j) => j.id === selectedJob) ?? null;
 
   return (
     <div className="bg-white min-h-screen">
@@ -75,8 +82,12 @@ export function Careers() {
                   <Skeleton className="h-12 w-32 rounded-full" />
                 </div>
               ))
+            ) : jobs.length === 0 ? (
+              <div className="text-center py-12 text-gray-400 font-medium">
+                No open roles right now. Check back soon.
+              </div>
             ) : (
-              jobOpenings.map((job, index) => (
+              jobs.map((job, index) => (
                 <AnimatedSection key={job.id} delay={index * 0.1}>
                   <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-brand-100 flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-lg hover:-translate-y-1 hover:border-brand-300 transition-all duration-300">
                     <div>
@@ -126,9 +137,15 @@ export function Careers() {
                 <X size={24} className="text-gray-500" />
               </button>
               
-              <h3 className="text-3xl font-display font-bold text-gray-900 mb-2">Apply Now</h3>
-              <p className="text-gray-500 mb-8">We're stoked you want to join us.</p>
-              
+              <h3 className="text-3xl font-display font-bold text-gray-900 mb-2">
+                {activeJob ? `Apply: ${activeJob.title}` : 'Apply Now'}
+              </h3>
+              {activeJob?.description ? (
+                <p className="text-gray-500 mb-8 whitespace-pre-line">{activeJob.description}</p>
+              ) : (
+                <p className="text-gray-500 mb-8">We're stoked you want to join us.</p>
+              )}
+
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>

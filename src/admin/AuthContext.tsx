@@ -1,18 +1,27 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  type User,
-} from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase';
+import { KEYS, readJSON, writeJSON } from '../lib/localStore';
+
+/**
+ * LOCAL auth — stand-in for Firebase Auth while running on the local backend.
+ * Credentials are checked against the list below (override via Vite env vars
+ * VITE_ADMIN_EMAIL / VITE_ADMIN_PASSWORD). A session flag is kept in
+ * localStorage. This is NOT secure (the password ships in the client bundle) —
+ * it's only for local development. Restore the Firebase AuthContext for prod.
+ */
+const LOCAL_ADMINS: { email: string; password: string }[] = [
+  {
+    email: import.meta.env.VITE_ADMIN_EMAIL ?? 'bugashvilig@gmail.com',
+    password: import.meta.env.VITE_ADMIN_PASSWORD ?? 'gvtiso1234',
+  },
+];
+
+interface AdminUser {
+  email: string;
+}
 
 interface AuthState {
-  user: User | null;
-  /** True once we've confirmed the signed-in user has an `admins/{uid}` doc. */
+  user: AdminUser | null;
   isAdmin: boolean;
-  /** True while the initial auth state / admin check resolves. */
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -20,43 +29,34 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
-async function checkAdmin(uid: string): Promise<boolean> {
-  try {
-    const snap = await getDoc(doc(db, 'admins', uid));
-    return snap.exists();
-  } catch {
-    return false;
-  }
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, async (nextUser) => {
-      setUser(nextUser);
-      setIsAdmin(nextUser ? await checkAdmin(nextUser.uid) : false);
-      setLoading(false);
-    });
+    setUser(readJSON<AdminUser | null>(KEYS.session, null));
+    setLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    const admin = await checkAdmin(cred.user.uid);
-    if (!admin) {
-      await signOut(auth);
-      throw new Error('This account does not have admin access.');
+    const match = LOCAL_ADMINS.find(
+      (a) => a.email.toLowerCase() === email.toLowerCase() && a.password === password,
+    );
+    if (!match) {
+      throw new Error('Incorrect email or password.');
     }
+    const session: AdminUser = { email: match.email };
+    writeJSON(KEYS.session, session);
+    setUser(session);
   };
 
   const logout = async () => {
-    await signOut(auth);
+    localStorage.removeItem(KEYS.session);
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, isAdmin: !!user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

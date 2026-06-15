@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, Link } from 'react-router-dom';
-import { LayoutDashboard, FileText, LayoutTemplate, LogOut, ExternalLink, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, Briefcase, Users, LayoutTemplate, LogOut, ExternalLink, Menu, X } from 'lucide-react';
 import { useAuth } from './AuthContext';
 
 const navItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/posts', label: 'Blog Posts', icon: FileText, end: false },
+  { to: '/admin/portfolio', label: 'Portfolio', icon: Briefcase, end: false },
+  { to: '/admin/careers', label: 'Careers', icon: Users, end: false },
   { to: '/admin/pages', label: 'Pages', icon: LayoutTemplate, end: false },
 ];
 

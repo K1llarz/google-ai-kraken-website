@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { MapPin, Mail, Phone, Loader2, CheckCircle2 } from 'lucide-react';
 import { AnimatedSection } from '../components/AnimatedSection';
-import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { handleFirestoreError, OperationType } from '../lib/firebaseUtils';
+import { addContact } from '../lib/contacts';
 import { services } from '../data';
 import { usePageContent } from '../lib/content';
 
@@ -24,17 +22,17 @@ export function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await addDoc(collection(db, 'contacts'), {
+      await addContact({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        details: `Service Requested: ${formData.service}\n\n${formData.details}`,
-        createdAt: serverTimestamp()
+        service: formData.service,
+        details: formData.details,
       });
       setIsSubmitted(true);
       setFormData({ firstName: '', lastName: '', email: '', service: services[0].title, details: '' });
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, 'contacts');
+      console.error('Failed to save contact submission locally:', error);
     } finally {
       setIsSubmitting(false);
     }

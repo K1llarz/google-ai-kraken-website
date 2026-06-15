@@ -22,6 +22,10 @@ import { Login } from './admin/pages/Login';
 import { Dashboard } from './admin/pages/Dashboard';
 import { PostsList } from './admin/pages/PostsList';
 import { PostEditor } from './admin/pages/PostEditor';
+import { PortfolioList } from './admin/pages/PortfolioList';
+import { PortfolioEditor } from './admin/pages/PortfolioEditor';
+import { JobsList } from './admin/pages/JobsList';
+import { JobEditor } from './admin/pages/JobEditor';
 import { PagesList } from './admin/pages/PagesList';
 import { PageEditor } from './admin/pages/PageEditor';
 
@@ -36,7 +40,7 @@ export default function App() {
             <Route path="about" element={<About />} />
             <Route path="services" element={<Services />} />
             <Route path="portfolio" element={<Portfolio />} />
-            <Route path="portfolio/:id" element={<PortfolioDetail />} />
+            <Route path="portfolio/:slug" element={<PortfolioDetail />} />
             <Route path="blog" element={<Blog />} />
             <Route path="blog/:slug" element={<BlogDetail />} />
             <Route path="careers" element={<Careers />} />
@@ -50,6 +54,10 @@ export default function App() {
               <Route index element={<Dashboard />} />
               <Route path="posts" element={<PostsList />} />
               <Route path="posts/:id" element={<PostEditor />} />
+              <Route path="portfolio" element={<PortfolioList />} />
+              <Route path="portfolio/:id" element={<PortfolioEditor />} />
+              <Route path="careers" element={<JobsList />} />
+              <Route path="careers/:id" element={<JobEditor />} />
               <Route path="pages" element={<PagesList />} />
               <Route path="pages/:pageId" element={<PageEditor />} />
             </Route>

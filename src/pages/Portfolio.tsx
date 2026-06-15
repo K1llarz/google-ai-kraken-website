@@ -3,27 +3,31 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { AnimatedSection } from '../components/AnimatedSection';
 import { Skeleton } from '../components/Skeleton';
-import { portfolioItems } from '../data';
+import { listPublishedPortfolio } from '../lib/portfolio';
+import type { PortfolioItem } from '../types';
 import { usePageContent } from '../lib/content';
-
-const categories = ['All', 'Performance Marketing', 'Design', 'AI/Tech'];
 
 export function Portfolio() {
   const { content } = usePageContent('portfolio');
+  const [items, setItems] = useState<PortfolioItem[]>([]);
   const [activeCategory, setActiveCategory] = useState('All');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, [activeCategory]);
+    (async () => {
+      try {
+        setItems(await listPublishedPortfolio());
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
-  const filteredItems = activeCategory === 'All' 
-    ? portfolioItems 
-    : portfolioItems.filter(item => item.category === activeCategory);
+  const categories = ['All', ...Array.from(new Set(items.map((i) => i.category).filter(Boolean)))];
+
+  const filteredItems = activeCategory === 'All'
+    ? items
+    : items.filter(item => item.category === activeCategory);
 
   return (
     <div className="bg-white min-h-screen">
@@ -80,7 +84,7 @@ export function Portfolio() {
                   key={item.id}
                   className="group relative overflow-hidden rounded-[2.5rem] aspect-[4/5] bg-gray-100 cursor-pointer border border-brand-100"
                 >
-                  <Link to={`/portfolio/${item.id}`} className="absolute inset-0 z-20">
+                  <Link to={`/portfolio/${item.slug}`} className="absolute inset-0 z-20">
                     <span className="sr-only">View Project</span>
                   </Link>
                   <img 

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileText, FilePenLine, CheckCircle2, Plus, ArrowRight } from 'lucide-react';
+import { FileText, FilePenLine, CheckCircle2, Briefcase, Users, Plus, ArrowRight } from 'lucide-react';
 import { listPosts } from '../../lib/posts';
+import { listPortfolio } from '../../lib/portfolio';
+import { listJobs } from '../../lib/jobs';
 import type { Post } from '../../types';
 import { PageHeader, Spinner, ErrorBanner, StatusBadge, Button } from '../components/ui';
 
@@ -12,15 +14,24 @@ function formatDate(post: Post): string {
 
 export function Dashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [portfolioCount, setPortfolioCount] = useState(0);
+  const [jobsCount, setJobsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        setPosts(await listPosts());
+        const [loadedPosts, portfolio, jobs] = await Promise.all([
+          listPosts(),
+          listPortfolio(),
+          listJobs(),
+        ]);
+        setPosts(loadedPosts);
+        setPortfolioCount(portfolio.length);
+        setJobsCount(jobs.length);
       } catch {
-        setError('Could not load posts. Check your connection and Firestore rules.');
+        setError('Could not load dashboard data.');
       } finally {
         setLoading(false);
       }
@@ -40,6 +51,8 @@ export function Dashboard() {
     { label: 'Total Posts', value: total, icon: FileText, color: 'text-brand-600 bg-brand-100' },
     { label: 'Published', value: published, icon: CheckCircle2, color: 'text-green-700 bg-green-100' },
     { label: 'Drafts', value: drafts, icon: FilePenLine, color: 'text-amber-700 bg-amber-100' },
+    { label: 'Portfolio', value: portfolioCount, icon: Briefcase, color: 'text-brand-700 bg-brand-100' },
+    { label: 'Open Roles', value: jobsCount, icon: Users, color: 'text-brand-600 bg-brand-100' },
   ];
 
   return (
