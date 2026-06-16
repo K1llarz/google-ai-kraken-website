@@ -75,7 +75,7 @@ export function Services() {
                         </div>
                         <p className="text-lg text-gray-600 font-medium leading-relaxed mb-6">
                           {service.description} 
-                          At Kroma, we don't just deliver basic setups; we integrate deep technical expertise to ensure maximum yield. We continuously monitor, A/B test, and iterate to achieve unprecedented results.
+                          At Kraken, we don't just deliver basic setups; we integrate deep technical expertise to ensure maximum yield. We continuously monitor, A/B test, and iterate to achieve unprecedented results.
                         </p>
                         <button className="text-brand-600 font-bold text-xs uppercase tracking-widest hover:text-brand-800 transition-colors flex items-center gap-1 group-hover:gap-2 duration-300">
                           Explore Methodology <span className="text-brand-400">→</span>

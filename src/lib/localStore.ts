@@ -50,3 +50,28 @@ export function toTimestamp(iso: string | null): TimestampLike | null {
   const date = new Date(iso);
   return { toDate: () => date, toMillis: () => date.getTime() };
 }
+
+/**
+ * One-time migration: replace "Kroma" → "Kraken" in all cached page content
+ * so the rebrand takes effect for users who already have localStorage data.
+ */
+const MIGRATION_KEY = 'kraken.migration.kroma-to-kraken';
+
+function migrateKromaToKraken(): void {
+  if (localStorage.getItem(MIGRATION_KEY)) return; // already ran
+
+  for (const key of Object.values(KEYS)) {
+    const raw = localStorage.getItem(key);
+    if (!raw) continue;
+    const updated = raw
+      .replace(/Kroma/g, 'Kraken')
+      .replace(/KROMA/g, 'KRAKEN')
+      .replace(/kroma/g, 'kraken');
+    if (updated !== raw) {
+      localStorage.setItem(key, updated);
+    }
+  }
+  localStorage.setItem(MIGRATION_KEY, new Date().toISOString());
+}
+
+migrateKromaToKraken();

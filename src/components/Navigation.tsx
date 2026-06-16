@@ -47,7 +47,7 @@ export function Navigation() {
           onClick={handleLogoClick}
           className="text-2xl font-black font-display tracking-tighter text-brand-600 group shrink-0"
         >
-          Kroma<span className="text-brand-400 transition-colors">.</span>
+          Kraken<span className="text-brand-400 transition-colors">.</span>
         </Link>
         <nav className="hidden md:flex justify-between items-center w-full max-w-sm lg:max-w-lg mx-6">
           {navKeys.map((key) => {

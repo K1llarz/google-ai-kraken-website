@@ -19,7 +19,7 @@ export function ChatWidget() {
           >
             <div className="bg-brand-900 text-white p-4 flex justify-between items-center">
               <div>
-                <h3 className="font-semibold font-display">Kroma Support</h3>
+                <h3 className="font-semibold font-display">Kraken Support</h3>
                 <p className="text-xs text-brand-200">Typically replies in a few minutes</p>
               </div>
               <button 
@@ -34,7 +34,7 @@ export function ChatWidget() {
             <div className="h-64 bg-brand-50 p-4 flex flex-col gap-3 overflow-y-auto">
               <div className="flex justify-start">
                 <div className="bg-white text-gray-800 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm max-w-[85%] border border-gray-100">
-                  Hi there! 👋 Welcome to Kroma. How can we help you elevate your brand today?
+                  Hi there! 👋 Welcome to Kraken. How can we help you elevate your brand today?
                 </div>
               </div>
             </div>

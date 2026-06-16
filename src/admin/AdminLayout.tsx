@@ -43,7 +43,7 @@ export function AdminLayout() {
       {/* Sidebar (desktop) */}
       <aside className="hidden lg:flex w-64 shrink-0 bg-brand-900 text-white flex-col p-6 fixed h-screen">
         <Link to="/admin" className="text-2xl font-black font-display tracking-tighter text-white mb-10">
-          Kroma<span className="text-brand-400">.</span>
+          Kraken<span className="text-brand-400">.</span>
           <span className="block text-[10px] uppercase tracking-[0.2em] font-black text-brand-400 mt-1">Admin</span>
         </Link>
         {navLinks}
@@ -71,7 +71,7 @@ export function AdminLayout() {
       {/* Mobile top bar */}
       <header className="lg:hidden fixed top-0 inset-x-0 z-40 bg-brand-900 text-white flex items-center justify-between px-4 h-14">
         <Link to="/admin" className="font-black font-display tracking-tighter">
-          Kroma<span className="text-brand-400">.</span> Admin
+          Kraken<span className="text-brand-400">.</span> Admin
         </Link>
         <button onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu" className="p-2">
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}

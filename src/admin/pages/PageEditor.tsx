@@ -116,7 +116,7 @@ export function PageEditor() {
         <div className="bg-white rounded-3xl border border-brand-100 p-6 md:p-8 space-y-4 shadow-sm">
           <h3 className="font-display font-bold text-brand-900">SEO Metadata</h3>
           <Field label="Meta title">
-            <TextInput value={seoTitle} onChange={(e) => { setSeoTitle(e.target.value); setSaved(false); }} placeholder={`${def.label} · Kroma`} />
+            <TextInput value={seoTitle} onChange={(e) => { setSeoTitle(e.target.value); setSaved(false); }} placeholder={`${def.label} · Kraken`} />
           </Field>
           <Field label="Meta description" help={`${seoDescription.length}/160`}>
             <TextArea rows={3} value={seoDescription} onChange={(e) => { setSeoDescription(e.target.value); setSaved(false); }} />

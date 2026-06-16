@@ -11,30 +11,25 @@ export function Home() {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center justify-start overflow-hidden bg-brand-200 mx-6 mt-6 pt-24 rounded-[2.5rem] group">
+      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-brand-200 mx-6 mt-6 pt-24 rounded-[2.5rem] group">
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-600/50 to-transparent z-10" />
         
-        <div className="relative z-20 max-w-7xl mx-auto px-10 w-full mb-10 mt-auto">
+        <div className="relative z-20 max-w-7xl mx-auto px-10 w-full">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className=" max-w-3xl"
+            className="max-w-4xl mx-auto text-center"
           >
             <h1 className="text-6xl md:text-8xl lg:text-9xl font-display leading-[0.9] text-white drop-shadow-2xl mb-8 font-bold tracking-tight">
               {content.heroTitle}
             </h1>
-            <p className="text-lg md:text-xl text-brand-50 mb-10 leading-relaxed max-w-xl font-medium">
+            <p className="text-lg md:text-xl text-brand-50 mb-10 leading-relaxed max-w-2xl mx-auto font-medium">
               {content.heroSubtitle}
             </p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <Link to="/contact" className="bg-white text-brand-600 px-8 py-4 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-brand-50 transition-colors shadow-xl">
-                {content.heroCtaLabel}
-              </Link>
-              <span className="text-white/90 text-sm font-semibold tracking-wide">
-                Trusted by 150+ Global Brands
-              </span>
-            </div>
+            <Link to="/contact" className="bg-white text-brand-600 px-14 py-5 rounded-full text-lg font-bold uppercase tracking-widest hover:bg-brand-50 transition-colors shadow-xl">
+                Contact Us
+            </Link>
           </motion.div>
         </div>
 
@@ -72,7 +67,7 @@ export function Home() {
                   {content.aboutHeading}
                 </h3>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed font-medium">
-                  Founded on the belief that traditional marketing is dead, Kroma merges behavioral psychology, stunning aesthetics, and deep technical expertise. We partner with founders who are ready to dominate their space.
+                  Founded on the belief that traditional marketing is dead, Kraken merges behavioral psychology, stunning aesthetics, and deep technical expertise. We partner with founders who are ready to dominate their space.
                 </p>
                 <ul className="space-y-4 mb-10">
                   {['Award-winning creative team', 'Proprietary AI growth models', 'Transparent ROI tracking'].map((item, i) => (

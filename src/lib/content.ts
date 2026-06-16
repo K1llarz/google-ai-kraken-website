@@ -32,9 +32,9 @@ export const PAGES: PageDef[] = [
     label: 'Home',
     fields: [
       { key: 'heroTitle', label: 'Hero title', type: 'text', default: "Let's Build Something Unforgettable." },
-      { key: 'heroSubtitle', label: 'Hero subtitle', type: 'textarea', default: 'Partner with Kroma to turn your vision into a bold digital presence — captivating audiences and driving measurable growth.' },
+      { key: 'heroSubtitle', label: 'Hero subtitle', type: 'textarea', default: 'Partner with Kraken to turn your vision into a bold digital presence — captivating audiences and driving measurable growth.' },
       { key: 'heroCtaLabel', label: 'Hero button label', type: 'text', default: 'Contact Us' },
-      { key: 'aboutLabel', label: 'About section label', type: 'text', default: 'About Kroma' },
+      { key: 'aboutLabel', label: 'About section label', type: 'text', default: 'About Kraken' },
       { key: 'aboutHeading', label: 'About section heading', type: 'text', default: "We don't just build brands. We build movements." },
       { key: 'servicesHeading', label: 'Services section heading', type: 'text', default: 'Everything you need to scale, under one roof.' },
       { key: 'portfolioHeading', label: 'Portfolio section heading', type: 'text', default: 'Selected projects.' },
@@ -88,7 +88,7 @@ export const PAGES: PageDef[] = [
     fields: [
       { key: 'heroTitle', label: 'Hero title', type: 'text', default: "Let's build together." },
       { key: 'heroSubtitle', label: 'Hero subtitle', type: 'textarea', default: "Ready to dramatically scale your brand? Drop us a line and let's get to work." },
-      { key: 'email', label: 'Email address', type: 'text', default: 'hello@kroma.agency' },
+      { key: 'email', label: 'Email address', type: 'text', default: 'hello@kraken.agency' },
       { key: 'phone', label: 'Phone number', type: 'text', default: '+1 (555) 000-0000' },
       { key: 'address', label: 'Office address', type: 'textarea', default: '123 Marketing Ave, Suite 400\nNew York, NY 10001' },
     ],

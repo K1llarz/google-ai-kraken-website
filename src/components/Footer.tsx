@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="lg:col-span-1">
             <Link to="/" className="text-3xl font-display font-black tracking-tighter text-brand-600 mb-6 block">
-              Kroma<span className="text-brand-400">.</span>
+              Kraken<span className="text-brand-400">.</span>
             </Link>
             <p className="text-gray-500 text-sm font-medium leading-relaxed mb-6 max-w-xs">
               We engineer brand experiences that capture attention, drive conversion, and inspire loyalty.
@@ -68,7 +68,7 @@ export function Footer() {
         </div>
         
         <div className="pt-8 border-t border-brand-100 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-300">
-          <p>EST. {new Date().getFullYear()} • KROMA AGENCY</p>
+          <p>EST. {new Date().getFullYear()} • KRAKEN AGENCY</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-brand-600 transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-brand-600 transition-colors">Terms of Service</a>

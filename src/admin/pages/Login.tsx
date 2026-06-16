@@ -47,7 +47,7 @@ export function Login() {
             <Lock size={24} />
           </div>
           <h1 className="text-3xl font-display font-bold text-white">
-            Kroma<span className="text-brand-400">.</span> Admin
+            Kraken<span className="text-brand-400">.</span> Admin
           </h1>
           <p className="text-brand-300 font-medium mt-2">Sign in to manage your site.</p>
         </div>

@@ -160,7 +160,7 @@ export function Careers() {
                   <input type="url" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Why Kroma?</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Why Kraken?</label>
                   <textarea rows={4} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors resize-none"></textarea>
                 </div>
                 <button type="submit" className="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-4 rounded-xl mt-4 transition-colors">
