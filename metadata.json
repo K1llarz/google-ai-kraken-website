@@ -1,6 +1,6 @@
 {
-  "name": "Kroma Marketing Agency",
+  "name": "Kraken Marketing Agency",
   "description": "A premium marketing agency web experience with dynamic visuals and fluid animations.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

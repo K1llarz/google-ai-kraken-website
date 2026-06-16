@@ -57,18 +57,43 @@ export function toTimestamp(iso: string | null): TimestampLike | null {
  */
 const MIGRATION_KEY = 'kraken.migration.kroma-to-kraken';
 
+const rebrand = (s: string): string =>
+  s.replace(/Kroma/g, 'Kraken').replace(/KROMA/g, 'KRAKEN').replace(/kroma/g, 'kraken');
+
+/** Skip image/URL values so we never rewrite base64 data URIs or links. */
+const isUrlish = (s: string): boolean =>
+  s.startsWith('data:') || s.startsWith('http://') || s.startsWith('https://');
+
+/**
+ * One-time rebrand of already-cached editable page content (Kroma → Kraken).
+ * Scoped to the `pages` store and to plain text values only — image and URL
+ * fields are left untouched. Seeded posts/portfolio/jobs come from data.ts,
+ * which is brand-neutral, so they need no migration.
+ */
 function migrateKromaToKraken(): void {
   if (localStorage.getItem(MIGRATION_KEY)) return; // already ran
 
-  for (const key of Object.values(KEYS)) {
-    const raw = localStorage.getItem(key);
-    if (!raw) continue;
-    const updated = raw
-      .replace(/Kroma/g, 'Kraken')
-      .replace(/KROMA/g, 'KRAKEN')
-      .replace(/kroma/g, 'kraken');
-    if (updated !== raw) {
-      localStorage.setItem(key, updated);
+  const raw = localStorage.getItem(KEYS.pages);
+  if (raw) {
+    try {
+      const pages = JSON.parse(raw) as Record<string, {
+        fields?: Record<string, unknown>;
+        seoTitle?: unknown;
+        seoDescription?: unknown;
+      }>;
+      for (const page of Object.values(pages)) {
+        if (!page || typeof page !== 'object') continue;
+        if (page.fields) {
+          for (const [k, v] of Object.entries(page.fields)) {
+            if (typeof v === 'string' && !isUrlish(v)) page.fields[k] = rebrand(v);
+          }
+        }
+        if (typeof page.seoTitle === 'string') page.seoTitle = rebrand(page.seoTitle);
+        if (typeof page.seoDescription === 'string') page.seoDescription = rebrand(page.seoDescription);
+      }
+      localStorage.setItem(KEYS.pages, JSON.stringify(pages));
+    } catch {
+      // Malformed cache — ignore; defaults already use "Kraken".
     }
   }
   localStorage.setItem(MIGRATION_KEY, new Date().toISOString());
